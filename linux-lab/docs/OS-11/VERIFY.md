@@ -102,3 +102,7 @@ ile değiştirilmemelidir.
 Ardından gerçek bir belge değişikliğinin commit/push adımlarını ve uygulama
 PR'ını gösterin. Çalıştırmadan test başarısı veya kişisel deneyim yazmayın.
 Video bağlantısını uygulama PR'ına ve ders Telegram grubuna ekleyin.
+
+## Ubuntu lab dogrulamasi
+
+15 Kasim 2026: feyzaozoglu Ubuntu hesabinda OS-11 testleri 23 passed verdi. Tam yapi 15/15 (cikis 0), eksik dosya 14/15 (cikis 1), duzeltme sonrasi 15/15 (cikis 0) olarak dogrulandi. JSON success=true verdi. Genel --quick kontrolu 4 asama basarili, 2 basarisiz, 1 atlandi sonucunu verdi; genel test cikis kodu 1 idi.
