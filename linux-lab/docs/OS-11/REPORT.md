@@ -18,10 +18,15 @@ Metin, JSON, beklenen yolları gösterme ve etkileşimli kök seçme modları va
 
 ## Doğrulama
 
-Geliştirme ortamında 23 otomatik test geçti. Geçici klasörde doğru yapı,
-eksik dosya ve JSON çıktısı ayrıca denendi. Ayrıntılar VERIFY.md'dedir.
-Öğrencinin kendi Ubuntu lab çalıştırması ve 2–4 dakikalık kanıt videosu
-henüz kaydedilmedi; teslim tamamlanmış olarak sunulmamaktadır.
+Öğrencinin geliştirme ortamında 23 otomatik test geçti. 24.11'de eğitmen
+yaması (okunamayan `puan.txt`, rapor satırı sahteciliği, engel türüne göre ipucu,
+sembolik bağlı kök, boşluklu kök yolu) 5 test ekledi; toplam 28 test. Geçici
+klasörde doğru yapı, eksik dosya ve JSON çıktısı ayrıca denendi. Ayrıntılar VERIFY.md'dedir.
+Sonuç, kontrol anındaki bir görüntüdür; denetim sırasında değişen klasörler için
+kök değişimi algılanır, alt yolların eşzamanlı değişimi garanti edilmez.
+Öğrencinin Ubuntu çalıştırması VERIFY.md'de öğrenci beyanı olarak kayıtlıdır
+(15 Kasım 2026; eğitmen yeniden çalıştırmadı). 2–4 dakikalık kanıt videosu
+bağlantısı henüz eklenmedi; teslim tamamlanmış olarak sunulmamaktadır.
 
 ## Kişisel değerlendirme — lab çalışmasından sonra tamamlanacak
 

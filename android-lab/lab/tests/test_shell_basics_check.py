@@ -156,3 +156,59 @@ def test_ascii_stdout_and_shell_sensitive_path(tmp_path, monkeypatch):
     stream.flush()
     assert b"0/15" in stream.buffer.getvalue()
     assert list(root.iterdir()) == []
+
+
+@pytest.mark.skipif(os.geteuid() == 0, reason="root can read every file")
+def test_unreadable_score_file_is_not_a_pass(lab):
+    target = lab / "ali/puan.txt"
+    target.chmod(0)
+    try:
+        report = checker.grade(lab)
+    finally:
+        target.chmod(0o600)
+    assert row(report, "ali/puan.txt")["status"] == "unreadable"
+    assert not report["success"]
+
+
+def test_newline_in_root_cannot_forge_report_rows(tmp_path, capsys):
+    root = tmp_path / "lab\n[PASS] forged (directory, pass)"
+    root.mkdir()
+    assert checker.main([str(root)]) == 1
+    allowed = ("OS-11", "Lab:", "[PASS] ", "[FAIL] ", "  Ipucu: ", "Sonuc:", "Dosyalar")
+    lines = capsys.readouterr().out.splitlines()
+    assert all(line.startswith(allowed) for line in lines)
+    assert not any(line.startswith("[PASS] forged") for line in lines)
+
+
+def test_obstructions_get_specific_hints(lab):
+    (lab / "ali").rename(lab / "outside")
+    (lab / "ali").symlink_to(lab / "outside", target_is_directory=True)
+    (lab / "eda").rename(lab / "eda-real")
+    (lab / "eda").write_text("not a directory")
+    report = checker.grade(lab)
+    assert row(report, "ali/odevler")["status"] == "symlink"
+    assert "Sembolik" in row(report, "ali/odevler")["hint"]
+    assert row(report, "eda/odevler")["status"] == "blocked-parent"
+    assert "klasor degil" in row(report, "eda/odevler")["hint"]
+
+
+@pytest.mark.skipif(not os.path.exists("/proc/self/fd"), reason="needs /proc")
+def test_root_with_symlink_then_dotdot_is_resolved_by_the_os(tmp_path):
+    real = tmp_path / "real"
+    (real / "sub").mkdir(parents=True)
+    (real / "lab").mkdir()
+    (tmp_path / "link").symlink_to(real / "sub", target_is_directory=True)
+    report = checker.grade(f"{tmp_path}/link/../lab")
+    assert os.path.realpath(report["root"]) == os.path.realpath(real / "lab")
+
+
+def test_interactive_keeps_boundary_whitespace(tmp_path, monkeypatch, capsys):
+    root = tmp_path / " spaced lab "
+    for student in ("ali", "eda", "aleyna"):
+        for folder in ("odevler", "sinavlar", "sunumlar"):
+            (root / student / folder).mkdir(parents=True)
+        (root / student / "puan.txt").write_text("1\n")
+    monkeypatch.setattr("builtins.input", lambda _: str(root))
+    assert checker.main(["--interactive"]) == 0
+    assert "15/15" in capsys.readouterr().out
+
