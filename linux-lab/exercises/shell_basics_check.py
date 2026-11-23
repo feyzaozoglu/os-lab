@@ -107,10 +107,12 @@ def grade(root):
         if resolved:
             try:
                 now, held = os.stat(root), os.fstat(root_fd)
-                if (now.st_dev, now.st_ino) != (held.st_dev, held.st_ino):
-                    raise OSError(errno.ESTALE, "lab root changed during the check")
             except FileNotFoundError:
                 raise OSError(errno.ESTALE, "lab root changed during the check") from None
+            except OSError:
+                now = held = None  # cannot tell; the per-path statuses already carry the errors
+            if now is not None and (now.st_dev, now.st_ino) != (held.st_dev, held.st_ino):
+                raise OSError(errno.ESTALE, "lab root changed during the check")
     finally:
         os.close(root_fd)
     passed = sum(row["status"] == "pass" for row in results)
